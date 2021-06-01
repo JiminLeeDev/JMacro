@@ -3,7 +3,7 @@ import os
 import pyautogui
 
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton
+from PyQt5.QtWidgets import QApplication, QWidget
 
 f = open('resource/data.txt', 'r')
 imageName = f.readlines()
