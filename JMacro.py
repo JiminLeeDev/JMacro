@@ -1,17 +1,33 @@
+import json 
 import sys
-import os
+import os   
 import pyautogui
 
 from PyQt5.QtCore import QTimer
 from PyQt5.QtWidgets import QApplication, QWidget
 
-f = open('resource/data.txt', 'r')
-imageName = f.readlines()
-f.close()
+configures = {
+    'ClickInterval': 1000,
+    'ImageAddress':[
+        'Cap 2021-06-02 02-15-00-602.png'
+    ]
+}
 
+def CreateConfigureFile(jsonData):
+    f = open("configures.json", "w")
+    json.dump(jsonData, f, indent='\t')
+    f.close()
+    
+def LoadConfigureFile():
+    f = open("configures.json", "r")
+    jsonData = f.read().replace(' ', '').replace('\n','').replace('\t','')
+    f.close()
+    configures = json.loads(jsonData)
+
+CreateConfigureFile(configures)
 def Macro():
-    for name in imageName: 
-        name = 'resource/' + name.split('\n')[0]  
+    for name in configures['ImageAddress']:
+        name = "resource/" + name
 
         if os.path.isfile(name):
             btnLocation = pyautogui.locateOnScreen(name)
@@ -19,20 +35,25 @@ def Macro():
             if btnLocation != None:
                 pyautogui.doubleClick(btnLocation)
 
+
 class MyApp(QWidget):
     def __init__(self):
         super().__init__()
         self.initUI()
+        self.setTimer()
         
     def initUI(self):
         self.setWindowTitle("JMacro")
         self.move(300, 300)
         self.resize(400, 200)
         self.show()
-        self.timer=QTimer()
-        self.timer.setInterval(100)
+
+    def setTimer(self):
+        self.timer = QTimer()
+        self.timer.setInterval(configures['ClickInterval'])
         self.timer.timeout.connect(Macro)
-        self.timer.start() 
+        self.timer.start()
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
