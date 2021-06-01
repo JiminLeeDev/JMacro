@@ -11,7 +11,7 @@ f.close()
 
 def Macro():
     for name in imageName: 
-        name = name.split('\n')[0]
+        name = 'resource/' + name.split('\n')[0]  
 
         if os.path.isfile(name):
             btnLocation = pyautogui.locateOnScreen(name)
