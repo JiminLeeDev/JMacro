@@ -4,7 +4,7 @@ import os
 import pyautogui
 
 from PyQt5.QtCore import QTimer
-from PyQt5.QtWidgets import QApplication, QPushButton, QWidget
+from PyQt5.QtWidgets import QApplication, QLineEdit, QPushButton, QWidget
 
 
 class ConfigureManager:
@@ -34,7 +34,12 @@ class MyApp(QWidget):
         super().__init__()
 
         self.configureManager = ConfigureManager()
-        self.configureManager.CreateConfigureFile()
+
+        if (
+            "ImageAddress" not in self.configureManager.configures.keys()
+            or "ClickInterval" not in self.configureManager.configures.keys()
+        ):
+            self.configureManager.CreateConfigureFile()
 
         self.initUI()
         self.setTimer()
@@ -50,6 +55,13 @@ class MyApp(QWidget):
         self.macroBtn.setGeometry(10, 50, 100, 30)
         self.macroBtn.clicked.connect(self.macroBtnClicked)
 
+        self.configureChangeBtn = QPushButton(self)
+        self.configureChangeBtn.setText("change configure")
+        self.configureChangeBtn.setGeometry(10, 100, 100, 30)
+        self.configureChangeBtn.clicked.connect(self.ConfigureChangeBtnClicked)
+
+        self.tBox = QLineEdit(self)
+        self.tBox.setGeometry(10, 150, 100, 30)
         self.setWindowTitle("JMacro")
         self.setGeometry(300, 300, 500, 500)
         self.show()
@@ -63,6 +75,15 @@ class MyApp(QWidget):
         else:
             btn.setText("macro off")
             self.timer.start()
+
+    def ConfigureChangeBtnClicked(self):
+        if self.tBox.text().find('.') == -1:
+            return
+
+        self.configureManager.configures["ImageAddress"].append(self.tBox.text())
+        self.configureManager.configures["ImageAddress"] = list(
+            set(self.configureManager.configures["ImageAddress"])
+        )
 
     def setTimer(self):
         self.timer = QTimer()
