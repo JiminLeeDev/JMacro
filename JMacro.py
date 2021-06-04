@@ -45,28 +45,33 @@ class MyApp(QWidget):
         self.setTimer()
 
     def initUI(self):
-        self.configureSaveBtn = QPushButton(self)
-        self.configureSaveBtn.setText("save configure")
-        self.configureSaveBtn.setGeometry(10, 10, 100, 30)
-        self.configureSaveBtn.clicked.connect(self.configureManager.SaveConfigureFile)
-
         self.macroBtn = QPushButton(self)
         self.macroBtn.setText("macro on")
-        self.macroBtn.setGeometry(10, 50, 100, 30)
-        self.macroBtn.clicked.connect(self.macroBtnClicked)
+        self.macroBtn.setGeometry(10, 10, 120, 30)
+        self.macroBtn.clicked.connect(self.MacroBtnClicked)
 
-        self.configureChangeBtn = QPushButton(self)
-        self.configureChangeBtn.setText("change configure")
-        self.configureChangeBtn.setGeometry(10, 100, 100, 30)
-        self.configureChangeBtn.clicked.connect(self.ConfigureChangeBtnClicked)
+        self.configureSaveBtn = QPushButton(self)
+        self.configureSaveBtn.setText("save configure")
+        self.configureSaveBtn.setGeometry(10, 50, 120, 30)
+        self.configureSaveBtn.clicked.connect(self.configureManager.SaveConfigureFile)
 
-        self.tBox = QLineEdit(self)
-        self.tBox.setGeometry(10, 150, 100, 30)
+        self.addAddressBtn = QPushButton(self)
+        self.addAddressBtn.setText("add address")
+        self.addAddressBtn.setGeometry(10, 90, 120, 30)
+        self.addAddressBtn.clicked.connect(self.addAddressBtnClicked)
+
+        self.removeAddressBtn = QPushButton(self)
+        self.removeAddressBtn.setText("remove address")
+        self.removeAddressBtn.setGeometry(10, 130, 120, 30)
+        self.removeAddressBtn.clicked.connect(self.RemoveAddressBtnClicked)
+
+        self.addressTBox = QLineEdit(self)
+        self.addressTBox.setGeometry(10, 170, 120, 30)
         self.setWindowTitle("JMacro")
         self.setGeometry(300, 300, 500, 500)
         self.show()
 
-    def macroBtnClicked(self):
+    def MacroBtnClicked(self):
         btn = self.sender()
 
         if btn.text() == "macro off":
@@ -76,20 +81,23 @@ class MyApp(QWidget):
             btn.setText("macro off")
             self.timer.start()
 
-    def ConfigureChangeBtnClicked(self):
-        if self.tBox.text().find('.') == -1:
+    def addAddressBtnClicked(self):
+        if self.addressTBox.text().find(".") == -1:
             return
 
-        self.configureManager.configures["ImageAddress"].append(self.tBox.text())
+        self.configureManager.configures["ImageAddress"].append(self.addressTBox.text())
         self.configureManager.configures["ImageAddress"] = list(
             set(self.configureManager.configures["ImageAddress"])
         )
+
+    def RemoveAddressBtnClicked(self):
+        if self.addressTBox.text() in self.configureManager.configures["ImageAddress"]:
+            self.configureManager.configures.pop(self.tbox.text())
 
     def setTimer(self):
         self.timer = QTimer()
         self.timer.setInterval(self.configureManager.configures["ClickInterval"])
         self.timer.timeout.connect(self.Macro)
-        self.timer.start()
 
     def Macro(self):
         for name in self.configureManager.configures["ImageAddress"]:
